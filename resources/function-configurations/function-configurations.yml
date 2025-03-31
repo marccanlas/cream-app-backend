@@ -1,0 +1,5 @@
+- dataSource: MYSQL_RDS
+  name: simpleCheck
+  request: pipelines/simpleCheck.request.vtl
+  response: pipelines/simpleCheck.response.vtl
+

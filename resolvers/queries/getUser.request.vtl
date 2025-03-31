@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT id, name, user_id as userId, bio, avatar, cover FROM user_accounts WHERE id = :USER_ID;"
+    ],
+    "variableMap": {
+        ":USER_ID": $util.toJson($ctx.args.id)
+    }
+}

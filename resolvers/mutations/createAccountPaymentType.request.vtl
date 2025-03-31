@@ -1,0 +1,12 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "INSERT INTO user_payment_methods (id, user_id, card_name, type) VALUES(UUID(), :ME_ID, :CARD_NAME, :TYPE);",
+    "SELECT id, email FROM users WHERE id = :ME_ID;"
+  ],
+  "variableMap": {
+    ":ME_ID": $util.toJson($ctx.identity.sub),
+    ":CARD_NAME": $util.toJson($ctx.args.input.cardName),
+    ":TYPE": $util.toJson($ctx.args.input.type)
+  }
+}

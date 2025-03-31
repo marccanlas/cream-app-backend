@@ -1,0 +1,22 @@
+version: "2"
+services:
+  db:
+    container_name: ${CONTAINER_NAME}
+    image: mysql
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - ../.env
+    networks:
+      - default
+  ddb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: ${DDB_CONTAINER_NAME}
+    ports:
+      - "${DDB_PORT}:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal

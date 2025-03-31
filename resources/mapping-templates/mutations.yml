@@ -1,0 +1,10 @@
+- dataSource: MYSQL_RDS
+  type: Mutation
+  field: createAccountPaymentType
+  request: mutations/createAccountPaymentType.request.vtl
+  response: main/itemResultSecond.response.vtl
+- dataSource: MYSQL_RDS
+  type: Mutation
+  field: deleteAccountPaymentType
+  request: mutations/deleteAccountPaymentType.request.vtl
+  response: main/itemResultSecond.response.vtl

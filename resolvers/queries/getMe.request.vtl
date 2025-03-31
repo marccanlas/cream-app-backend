@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT id, email FROM users WHERE id = :ME_ID;"
+    ],
+    "variableMap": {
+        ":ME_ID": $util.toJson($ctx.identity.sub)
+    }
+}

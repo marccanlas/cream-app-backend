@@ -1,0 +1,45 @@
+Resources:
+  ServerlessSecurityGroup:
+    DependsOn:
+      - ServerlessVPC
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SecurityGroup for Serverless Functions
+      VpcId:
+        Ref: ServerlessVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '0'
+          ToPort: '65535'
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: 'Name'
+          Value: '${self:service.name}-ServerlessSecurityGroup'
+  RdsSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "RDS Security Group"
+      SecurityGroupEgress:
+        - Description: "Allow all outbound"
+          IpProtocol: tcp
+          FromPort: 0
+          CidrIp: "0.0.0.0/0"
+          ToPort: 65535
+      SecurityGroupIngress:
+        - Description: "Permit Aurora (3306) from AppSecurityGroup"
+          FromPort: 3306
+          IpProtocol: tcp
+          SourceSecurityGroupId:
+            Ref: ServerlessSecurityGroup
+          ToPort: 3306
+      VpcId:
+        Ref: ServerlessVPC
+      Tags:
+        - Key: 'Name'
+          Value: '${self:service.name}-RdsSecurityGroup'
+
+Outputs:
+  ServerlessSecurityGroup:
+    Value: {"Ref": ServerlessSecurityGroup}
+    Export:
+      Name: ServerlessSecurityGroup-${env:STAGE}

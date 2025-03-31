@@ -1,0 +1,14 @@
+- type: RELATIONAL_DATABASE
+  name: MYSQL_RDS
+  description: "Database"
+  config:
+    dbClusterIdentifier: !ImportValue RDSCluster-${env:STAGE}
+    databaseName: ${env:RDS_PREFIX}_${env:STAGE}
+    awsSecretStoreArn: !ImportValue RDSInstanceSecret-${env:STAGE}
+    serviceRoleArn: !ImportValue AppSyncRDSServiceRole-${env:STAGE}
+    region: ${env:REGION}
+- type: AMAZON_DYNAMODB
+  name: UsersTable
+  description: Users Table
+  config:
+    tableName: !ImportValue UsersTable-${env:STAGE}

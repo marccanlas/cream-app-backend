@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT id, name, avatar FROM user_accounts WHERE id = :ACCOUNT_ID;"
+    ],
+    "variableMap": {
+       ":ACCOUNT_ID": $util.toJson($ctx.source.userAccountId)
+    }
+}

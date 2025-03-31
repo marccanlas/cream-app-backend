@@ -1,0 +1,115 @@
+Resources:
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ${self:service.name}-UserPool-${self:provider.stage}
+      UsernameConfiguration:
+        CaseSensitive: false
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: false
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MaxLength: 100
+        - Name: preferred_username
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MaxLength: 100
+        - Name: phone_number
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          NumberAttributeConstraints:
+            MinValue: 20
+        - Name: family_name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MaxLength: 50
+        - Name: given_name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+            MaxLength: 50
+        - Name: updated_at
+          AttributeDataType: Number
+          Mutable: true
+          Required: false
+          NumberAttributeConstraints:
+            MinValue: 0
+        - Name: created_at
+          AttributeDataType: Number
+          Mutable: false
+          Required: false
+          NumberAttributeConstraints:
+            MinValue: 0
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: ${self:service.name}-UserPoolClient-${self:provider.stage}
+      UserPoolId:
+        Ref: CognitoUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
+      ReadAttributes:
+        - preferred_username
+        - email
+        - phone_number
+        - family_name
+        - given_name
+        - updated_at
+        - custom:created_at
+      WriteAttributes:
+        - preferred_username
+        - email
+        - phone_number
+        - family_name
+        - given_name
+        - updated_at
+        - custom:created_at
+  CognitoIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: ${self:service.name}-IdentityPool-${self:provider.stage}
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProviders:
+        - ClientId:
+            Ref: CognitoUserPoolClient
+          ProviderName:
+            Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
+  CognitoIdentityPoolRoles:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId:
+        Ref: CognitoIdentityPool
+      Roles:
+        authenticated:
+          Fn::GetAtt: [ CognitoAuthRole, Arn ]
+        unauthenticated:
+          Fn::GetAtt: [ CognitoUnauthRole, Arn ]
+
+Outputs:
+  CognitoUserPool:
+    Value:
+      Ref: CognitoUserPool
+    Export:
+      Name: CognitoUserPool-${env:STAGE}

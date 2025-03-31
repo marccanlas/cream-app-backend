@@ -1,0 +1,63 @@
+Resources:
+  creamBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # Set the CORS policy
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            MaxAge: 3000
+  creamUserMediaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: cream-user-media-${env:STAGE}-${env:REGION}
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - HEAD
+              - DELETE
+            AllowedOrigins:
+              - '*'
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+  creamUserMediaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref creamUserMediaBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PermissionBucketPolicy
+            Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: arn:aws:s3:::cream-user-media-${env:STAGE}-${env:REGION}/*
+            Principal: '*'
+
+Outputs:
+  creamUserMediaBucketName:
+    Value:
+      Ref: creamUserMediaBucket
+    Export:
+      Name: ${env:NAME}-${env:STAGE}-UserMedia

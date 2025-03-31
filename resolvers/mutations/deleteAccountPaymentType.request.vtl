@@ -1,0 +1,11 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "DELETE from user_payment_methods WHERE id = :PAYMENT_ID;",
+    "SELECT id, email FROM users WHERE id = :ME_ID;"
+  ],
+  "variableMap": {
+    ":ME_ID": $util.toJson($ctx.identity.sub),
+    ":PAYMENT_ID": $util.toJson($ctx.args.id)
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT id, user_account_id as userAccountId, user_social_account_id as userSocialAccountId, name, description, royalty_fee as royaltyFee, thumbnail_url as thumbnailUrl FROM digis WHERE user_account_id = :ACCOUNT_ID;"
+    ],
+    "variableMap": {
+       ":ACCOUNT_ID": $util.toJson($ctx.source.id)
+    }
+}

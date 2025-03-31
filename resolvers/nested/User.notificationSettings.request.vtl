@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT notification_offers as notificationOffers, notification_sale as notificationSales, notification_received as notificationReceived FROM users WHERE id = :USER_ID;"
+    ],
+    "variableMap": {
+       ":USER_ID": $util.toJson($ctx.source.id)
+    }
+}

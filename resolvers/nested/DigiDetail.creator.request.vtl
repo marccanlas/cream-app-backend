@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT user_accounts.id, user_accounts.name, user_accounts.avatar FROM user_social_accounts INNER JOIN user_accounts ON user_accounts.id = user_social_accounts.user_account_id WHERE user_social_accounts.id = :SOCIAL_ACCOUNT_ID;"
+    ],
+    "variableMap": {
+        ":SOCIAL_ACCOUNT_ID": $util.toJson($ctx.source.userSocialAccountId)
+    }
+}

@@ -1,0 +1,4 @@
+databaseMigrate:
+  handler: functions/database/migrate/index.handler
+  role: !ImportValue LambdaServiceRole-${env:STAGE}
+

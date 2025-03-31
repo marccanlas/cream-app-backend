@@ -1,0 +1,13 @@
+Resources:
+  ServerlessNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - ElasticIpLambda
+          - AllocationId
+      SubnetId:
+        Ref: ServerlessSubnetA
+      Tags:
+        - Key: 'Name'
+          Value: '${self:service.name}-ServerlessNATGateway'

@@ -1,0 +1,10 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT IF(passcode = :PIN, 'TRUE', 'FALSE') as booleanValue FROM users WHERE id = :USER_ID;"
+    ],
+    "variableMap": {
+        ":USER_ID": $util.toJson($ctx.identity.sub),
+        ":PIN": $util.toJson($ctx.args.pin)
+    }
+}

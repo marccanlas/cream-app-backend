@@ -1,0 +1,140 @@
+Resources:
+  AppSyncRDSServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "appsync_rds_${self:service.name}_${self:provider.stage}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "appsync_rds_${self:service.name}_${self:provider.stage}-Policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'rds-data:*'
+                Resource:
+                  - 'arn:aws:rds:${env:REGION}:${env:ACCOUNT_ID}:cluster:*'
+                  - 'arn:aws:rds:${env:REGION}:${env:ACCOUNT_ID}:cluster:*:*'
+              - Effect: 'Allow'
+                Action:
+                  - 'secretsmanager:GetSecretValue'
+                Resource:
+                  - 'arn:aws:secretsmanager:*:*:secret:RDSInstanceSecret*'
+  LambdaServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "lambda_${self:service.name}_${self:provider.stage}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "lambda_${self:service.name}_${self:provider.stage}-Policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:*"
+                  - "logs:*"
+                  - "dbqms:*"
+                  - "rds-data:*"
+                  - "cognito-idp:*"
+                  - "cognito-identity:*"
+                  - "cognito-idp:*"
+                  - "cognito-sync:*"
+                  - "secretsmanager:*"
+                  - "ec2:*"
+                  - "s3:*"
+                Resource:
+                  - "*"
+  CognitoAuthRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CognitoAuthRole-${self:service.name}-${self:provider.stage}
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud":
+                  Ref: CognitoIdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": authenticated
+      Policies:
+        - PolicyName: CognitoAuthRole-${self:service.name}-${self:provider.stage}-Policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "appsync:GraphQL"
+                Resource: "*"
+              - Effect: 'Allow'
+                Action:
+                  - 's3:*'
+                Resource: '*'
+  CognitoUnauthRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud":
+                  Ref: CognitoIdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: "CognitoUnauthorizedPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'cognito-sync:*'
+                  - 'cognito-identity:*'
+                  - "cognito-idp:*"
+                Resource: '*'
+              - Effect: "Allow"
+                Action:
+                  - "appsync:GraphQL"
+                Resource: "*"
+Outputs:
+  AppSyncRDSServiceRole:
+    Value:
+      'Fn::GetAtt': [ AppSyncRDSServiceRole, Arn ]
+    Export:
+      Name: AppSyncRDSServiceRole-${env:STAGE}
+  LambdaServiceRole:
+    Value:
+      'Fn::GetAtt': [ LambdaServiceRole, Arn ]
+    Export:
+      Name: LambdaServiceRole-${env:STAGE}

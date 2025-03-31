@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT id, network,created_at as createdAt, oauth_expired_at as expiredAt FROM user_social_accounts WHERE id = :USER_SOCIAL_ACCOUNT_ID;"
+    ],
+    "variableMap": {
+        ":USER_SOCIAL_ACCOUNT_ID": $util.toJson($ctx.args.actingAsId)
+    }
+}

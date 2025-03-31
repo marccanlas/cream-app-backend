@@ -1,0 +1,13 @@
+- ${file(./resources/config/roles.yml)}
+- ${file(./resources/config/cognito.yml)}
+- ${file(./resources/config/subnet.yml)}
+- ${file(./resources/config/vpc.yml)}
+- ${file(./resources/config/internet-gateway.yml)}
+- ${file(./resources/config/security-groups.yml)}
+- ${file(./resources/config/secrets.yml)}
+- ${file(./resources/config/db-cluster.yml)}
+- ${file(./resources/config/elastic-ip.yml)}
+- ${file(./resources/config/route-private.yml)}
+- ${file(./resources/config/route-public.yml)}
+- ${file(./resources/config/nat-gateway.yml)}
+- ${file(./resources/config/storage.yml)}

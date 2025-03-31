@@ -1,0 +1,9 @@
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT id, type, card_name as cardName, card_number as cardNumber, card_expiry as cardExpiry, card_cvc as cardCvc, card_postcode as cardPostcode FROM user_payment_methods WHERE user_id = :USER_ID;"
+    ],
+    "variableMap": {
+       ":USER_ID": $util.toJson($ctx.source.id)
+    }
+}

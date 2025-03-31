@@ -1,0 +1,241 @@
+type Query {
+    getMe: User
+    getUser(actingAsId: ID!, id: ID!): UserAccount
+    getPinAuthorisation(pin: String!): Boolean
+    listUsers: [User]!
+    listSocialAccounts(actingAsId: ID!): [SocialAccounts]
+}
+
+type Mutation {
+    createAccountPaymentType(input: UpdatePaymentInfoInput): User
+    deleteAccountPaymentType(id: ID!): User
+}
+
+type Activity {
+    id: ID
+    type: TransactionType
+    seller: UserAccount
+    buyer: UserAccount
+    price: Float
+    startAt: AWSDateTime
+    endAt: AWSDateTime
+    transactionHash: String
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+    rejectedAt: AWSDateTime
+}
+
+input CreateSocialAccountInput {
+    network: Networks!
+}
+
+input CreateDigiSaleInput {
+    id: ID! # Digi ID
+    price: Float
+    feePercent: Int
+    startAt: AWSDateTime
+    endAt: AWSDateTime
+}
+
+input CreateDigiOfferInput {
+    id: ID!  # Digi ID, for which it creates a Transaction ID for which references the Digi they want to create an Offer for
+    price: Float!
+    # Have not specified payment yet, as we need a payment gateway first, this is TBD
+}
+
+type CreateDigi {
+    id: ID
+    name: String
+    network: Networks
+    thumbnailURL: String
+    mediaURL: String
+    royaltyFee: Int
+    creator: DigiFeedUserDetailsType
+    owner: DigiFeedUserDetailsType
+    digiFeedType: DigiFeedTypeEnum # is this for sale (FORSALE) or its not (MINTED)
+}
+
+type DigiSale {
+    id: ID
+    name: String
+    network: Networks
+    thumbnailURL: String
+    mediaURL: String
+    price: Float
+    royaltyFee: Int
+    startDate: AWSDateTime
+    endDate: AWSDateTime
+    creator: DigiFeedUserDetailsType
+    owner: DigiFeedUserDetailsType
+    digiFeedType: DigiFeedTypeEnum # is this for sale (FORSALE) or its not (MINTED)
+}
+
+type DigiFeedUserDetailsType {
+    id: ID
+    name: String
+    avatar: String
+}
+
+type DigiDetail {
+    id: ID
+    name: String
+    network: Networks
+    thumbnailURL: String
+    mediaURL: String
+    creator: DigiFeedUserDetailsType
+    owner: DigiFeedUserDetailsType
+    royaltyFee: Int
+    price: Float
+    transactionStatus: TransactionType
+    activity: [Activity]
+}
+
+type DigiFeedUserDetailsType {
+    id: ID
+    name: String
+    avatar: String
+}
+
+type DigiDetails {
+    page: Int
+    digis: [DigiDetail]
+}
+
+enum DigiFeedTypeEnum {
+    FORSALE
+    ACCEPTED
+    MINTED
+}
+
+type DigiFeedResult {
+    page: Int
+    totalPages: Int
+    digiFeed: [DigiDetail]
+}
+
+type DigiFeedItem {
+    id: ID
+    name: String
+    network: Networks
+    thumbnailURL: String
+    sourceMediaURL: String
+    transcodedMediaURL: String
+    creator: DigiFeedUserDetailsType
+    owner: DigiFeedUserDetailsType
+    digiFeedType: DigiFeedTypeEnum # is this for sale (FORSALE) or its not (MINTED)
+}
+
+enum DigiFeedTypeEnum {
+    FORSALE
+    ACCEPTED
+    MINTED
+}
+
+type NotificationSettings {
+    notificationOffers: Boolean
+    notificationSales: Boolean
+    notificationReceived: Boolean
+}
+
+enum Networks {
+    META
+    INSTAGRAM
+    YOUTUBE
+    TIKTOK
+}
+
+enum Paymentype {
+    PAYIN
+    PAYOUT
+}
+
+type PaymentInfo {
+    id: ID
+    type: Paymentype
+    cardName: String
+    cardNumber: String
+    cardExpiry: String
+    cardCvc: String
+    cardPostcode: String
+}
+
+type SocialAccounts {
+    id: ID
+    network: Networks
+    createdAt: AWSDateTime
+    expiredAt: AWSDateTime
+}
+
+type SocialAccountOAuthLink {
+    link: String
+}
+
+type SocialAccountMedia {
+    id: ID
+    network: Networks
+    mediaType: String
+    mediaThumbnail: String
+    mediaURL: String
+    title: String
+    username: String
+    timestamp: AWSDateTime
+}
+
+enum TransactionType {
+    MINTED
+    OFFER
+    FORSALE
+    ACCEPTED
+}
+
+type User {
+    id: ID
+    email: String!
+    payments: [PaymentInfo]
+    notificationSettings: NotificationSettings
+    userAccounts: [UserAccount]
+}
+
+type UserAccount {
+    id: ID
+    name: String
+    bio: String
+    avatar: String
+    cover: String
+    digis: [DigiDetail]
+}
+
+input UpdateMeInput {
+    email: String
+}
+
+input UpdateAccountInput {
+    name: String
+    bio: String
+    avatar: String
+    cover: String
+    notifications: UpdateNotificationSettingsInput
+}
+
+input UpdatePaymentInfoInput {
+    cardName: String!
+    type: Paymentype
+}
+
+input UpdateNotificationSettingsInput {
+    notificationOffers: Boolean
+    notificationSales: Boolean
+    notificationReceived: Boolean
+}
+
+input UpdateSocialAccountInput {
+    OAuthAccessTokenResponse: String
+}
+
+input UpdateDigiSaleInput {
+    id: ID!  # Digi ID, must have a digitransaction.id where TYPE = FORSALE, MINTED.
+    price: Float
+    feePercent: Int
+    startAt: AWSDateTime
+    endAt: AWSDateTime
+}
